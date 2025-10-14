@@ -64,7 +64,8 @@
 	</dependencies>
 
 	<build>
-		<plugins>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -74,6 +75,19 @@
 					</image>
 				</configuration>
 			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven-jar-plugin.version}</version>
+                <configuration>
+                    <excludes>
+                        <!-- exclude any logback configuration from the jar -->
+                        <exclude>**/logback.xml</exclude>
+                        <!-- exclude any environment properties from the jar -->
+                        <exclude>**/environment.properties</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 

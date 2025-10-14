@@ -1,0 +1,4 @@
+cammesa-raw:
+  name: "cammesa-raw"
+  partitions: 1
+  replicas: 1
