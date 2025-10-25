@@ -1,0 +1,6 @@
+cammesa-consumption:
+    url: https://api.cammesa.com/demanda-svc/demanda
+    idRegion: 426
+cammesa-generation:
+    url: https://api.cammesa.com/demanda-svc/generacion
+    idRegion: 426
