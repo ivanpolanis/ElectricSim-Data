@@ -47,4 +47,20 @@ public class TopicConfig {
             super(name, partitions, replicas);
         }
     }
+
+    @Bean("energySnapshotsTopic")
+    public NewTopic energySnapshotsTopic(EnergySnapshotsTopicProperties energySnapshotsTopicProperties) {
+        logger.info("Building Energy Snapshots Topic");
+        return TopicBuilder
+                .name(energySnapshotsTopicProperties.getName())
+                .partitions(energySnapshotsTopicProperties.getPartitions())
+                .replicas(energySnapshotsTopicProperties.getReplicas()).build();
+    }
+
+    @ConfigurationProperties(prefix = "energy-snapshots")
+    public static class EnergySnapshotsTopicProperties extends TopicProperties {
+        public EnergySnapshotsTopicProperties(String name, Integer partitions, Integer replicas) {
+            super(name, partitions, replicas);
+        }
+    }
 }

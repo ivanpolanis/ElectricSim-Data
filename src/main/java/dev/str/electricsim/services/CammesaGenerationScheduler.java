@@ -46,6 +46,6 @@ public class CammesaGenerationScheduler {
                         !d.timestamp().isAfter(now.plus(WINDOW)))
                 .findFirst()
                 .map(d -> new CammesaRecord(d.timestamp(), d.energyGenerated(), CammesaRecordType.GENERATION, "CABA"))
-                .ifPresent(producer::send);
+                .ifPresent(record -> producer.send("CABA", record));
     }
 }
