@@ -1,0 +1,56 @@
+package dev.str.electricsim.services;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.str.electricsim.dto.OpenWeatherRaw;
+import dev.str.electricsim.producers.OpenWeatherProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+@Service
+public class OpenWeatherScheduler {
+
+    private final RestTemplate rest = new RestTemplate();
+    private final ObjectMapper mapper = new ObjectMapper();
+    private final OpenWeatherProducer producer;
+    private final Logger log = LoggerFactory.getLogger(OpenWeatherScheduler.class);
+
+    @Value("${openweather.api.key:}")
+    private String apiKey;
+
+    @Value("${openweather.url}")
+    private String url;
+
+    @Value("${openweather.city}")
+    private String city;
+
+    public OpenWeatherScheduler(OpenWeatherProducer producer) {
+        this.producer = producer;
+    }
+
+    @Scheduled(cron = "0 */1 * * * *") // cada 5 minutos en los minutos 0,5,10...
+    public void fetchAndPublish() {
+        if (apiKey == null || apiKey.isBlank()) {
+            // log y salir
+            log.info("No API key provided");
+            return;
+        }
+
+        try {
+            String requestUrl = String.format("%s?%s&appid=%s&units=%s", url, city, apiKey, "metric");
+            ResponseEntity<String> resp = rest.getForEntity(requestUrl, String.class);
+            if (resp.getStatusCode().is2xxSuccessful() && resp.getBody() != null) {
+                OpenWeatherRaw raw = mapper.readValue(resp.getBody(), OpenWeatherRaw.class);
+                producer.publish(raw);
+            } else {
+                log.info(resp.getBody());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
