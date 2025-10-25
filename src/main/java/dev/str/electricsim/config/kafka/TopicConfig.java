@@ -17,17 +17,17 @@ public class TopicConfig {
     Logger logger = LoggerFactory.getLogger(TopicConfig.class);
 
     @Bean
-    public NewTopic camessaTopic(cammesaTopicProperties cammesaTopicProperties) {
-        logger.info("Camessa topic properties: {}", cammesaTopicProperties);
+    public NewTopic camessaConsumptionTopic(cammesaConsumptionTopicProperties cammesaConsumptionTopicProperties) {
+        logger.info("Camessa topic properties: {}", cammesaConsumptionTopicProperties);
         return TopicBuilder
-                .name(cammesaTopicProperties.getName())
-                .partitions(cammesaTopicProperties.getPartitions())
-                .replicas(cammesaTopicProperties.getReplicas()).build();
+                .name(cammesaConsumptionTopicProperties.getName())
+                .partitions(cammesaConsumptionTopicProperties.getPartitions())
+                .replicas(cammesaConsumptionTopicProperties.getReplicas()).build();
     }
 
-    @ConfigurationProperties(prefix = "cammesa-raw")
-    public static class cammesaTopicProperties extends TopicProperties {
-        public cammesaTopicProperties(String name, Integer partitions, Integer replicas) {
+    @ConfigurationProperties(prefix = "cammesa-consumption-raw")
+    public static class cammesaConsumptionTopicProperties extends TopicProperties {
+        public cammesaConsumptionTopicProperties(String name, Integer partitions, Integer replicas) {
             super(name, partitions, replicas);
         }
     }

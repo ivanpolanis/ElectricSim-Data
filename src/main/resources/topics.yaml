@@ -1,4 +1,9 @@
-cammesa-raw:
-  name: "cammesa-raw"
+cammesa-consumption-raw:
+  name: "cammesa-consumption-raw"
+  partitions: 1
+  replicas: 1
+
+cammesa-generation-raw:
+  name: "cammesa-generation-raw"
   partitions: 1
   replicas: 1
