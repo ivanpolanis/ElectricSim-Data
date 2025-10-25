@@ -7,3 +7,8 @@ cammesa-generation-raw:
   name: "cammesa-generation-raw"
   partitions: 1
   replicas: 1
+
+openweather-raw:
+  name: "openweather-raw"
+  partitions: 1
+  replicas: 1
