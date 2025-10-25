@@ -18,9 +18,9 @@ public class CammesaGenerationProducer {
         this.cammesaGenerationTopic = cammesaGenerationTopic;
     }
 
-    public void send(CammesaRecord cammesaRecord) {
+    public void send(String key,CammesaRecord cammesaRecord) {
         log.info("Sending message to Camessa Generation topic: {}", cammesaRecord);
-        template.send(cammesaGenerationTopic.name(), cammesaRecord);
+        template.send(cammesaGenerationTopic.name(), key, cammesaRecord);
     }
 
 }

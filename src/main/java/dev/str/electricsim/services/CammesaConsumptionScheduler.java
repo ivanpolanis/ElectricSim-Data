@@ -46,6 +46,6 @@ public class CammesaConsumptionScheduler {
                         !d.timestamp().isAfter(now.plus(WINDOW)))
                 .findFirst()
                 .map(d -> new CammesaRecord(d.timestamp(), d.demand(), CammesaRecordType.DEMAND, "CABA"))
-                .ifPresent(producer::send);
+                .ifPresent( record -> producer.send("CABA", record));
     }
 }

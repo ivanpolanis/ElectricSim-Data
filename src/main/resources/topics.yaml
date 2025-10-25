@@ -12,3 +12,8 @@ openweather-raw:
   name: "openweather-raw"
   partitions: 1
   replicas: 1
+
+energy-snapshots:
+  name: "energy-snapshots"
+  partitions: 1
+  replicas: 1
