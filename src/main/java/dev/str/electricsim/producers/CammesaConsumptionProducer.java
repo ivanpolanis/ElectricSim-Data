@@ -11,16 +11,16 @@ import org.springframework.stereotype.Service;
 public class CammesaConsumptionProducer {
     Logger log = LoggerFactory.getLogger(CammesaConsumptionProducer.class);
     private final KafkaTemplate<String, CammesaRecord> template;
-    private final NewTopic camessaConsumptionTopic;
+    private final NewTopic cammesaConsumptionTopic;
 
-    public CammesaConsumptionProducer(KafkaTemplate<String, CammesaRecord> template, NewTopic camessaConsumptionTopic) {
+    public CammesaConsumptionProducer(KafkaTemplate<String, CammesaRecord> template, NewTopic cammesaConsumptionTopic) {
         this.template = template;
-        this.camessaConsumptionTopic = camessaConsumptionTopic;
+        this.cammesaConsumptionTopic = cammesaConsumptionTopic;
     }
 
     public void send(CammesaRecord cammesaRecord) {
-        log.info("Sending message to Camessa Consumption topic: {}", cammesaRecord);
-        template.send(camessaConsumptionTopic.name(), cammesaRecord);
+        log.info("Sending message to Cammessa Consumption topic: {}", cammesaRecord);
+        template.send(cammesaConsumptionTopic.name(), cammesaRecord);
     }
 
 }

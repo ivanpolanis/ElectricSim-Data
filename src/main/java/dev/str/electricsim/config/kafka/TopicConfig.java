@@ -16,9 +16,9 @@ import org.springframework.kafka.config.TopicBuilder;
 public class TopicConfig {
     Logger logger = LoggerFactory.getLogger(TopicConfig.class);
 
-    @Bean
-    public NewTopic camessaConsumptionTopic(cammesaConsumptionTopicProperties cammesaConsumptionTopicProperties) {
-        logger.info("Camessa topic properties: {}", cammesaConsumptionTopicProperties);
+    @Bean("cammesaConsumptionTopic")
+    public NewTopic camessaConsumptionTopic(CammesaConsumptionTopicProperties cammesaConsumptionTopicProperties) {
+        logger.info("Building Cammesa Consumption Topic");
         return TopicBuilder
                 .name(cammesaConsumptionTopicProperties.getName())
                 .partitions(cammesaConsumptionTopicProperties.getPartitions())
@@ -26,8 +26,24 @@ public class TopicConfig {
     }
 
     @ConfigurationProperties(prefix = "cammesa-consumption-raw")
-    public static class cammesaConsumptionTopicProperties extends TopicProperties {
-        public cammesaConsumptionTopicProperties(String name, Integer partitions, Integer replicas) {
+    public static class CammesaConsumptionTopicProperties extends TopicProperties {
+        public CammesaConsumptionTopicProperties(String name, Integer partitions, Integer replicas) {
+            super(name, partitions, replicas);
+        }
+    }
+
+    @Bean("cammesaGenerationTopic")
+    public NewTopic camessaGenerationTopic(CammesaGenerationTopicProperties cammesaGenerationTopicProperties) {
+        logger.info("Building Cammesa Generation Topic");
+        return TopicBuilder
+                .name(cammesaGenerationTopicProperties.getName())
+                .partitions(cammesaGenerationTopicProperties.getPartitions())
+                .replicas(cammesaGenerationTopicProperties.getReplicas()).build();
+    }
+
+    @ConfigurationProperties(prefix = "cammesa-generation-raw")
+    public static class CammesaGenerationTopicProperties extends TopicProperties {
+        public CammesaGenerationTopicProperties(String name, Integer partitions, Integer replicas) {
             super(name, partitions, replicas);
         }
     }

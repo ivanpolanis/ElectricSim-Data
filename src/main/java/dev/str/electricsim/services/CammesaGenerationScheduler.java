@@ -1,9 +1,9 @@
 package dev.str.electricsim.services;
 
-import dev.str.electricsim.dto.CammesaRawConsumption;
+import dev.str.electricsim.dto.CammesaRawGeneration;
 import dev.str.electricsim.model.CammesaRecord;
 import dev.str.electricsim.model.CammesaRecordType;
-import dev.str.electricsim.producers.CammesaConsumptionProducer;
+import dev.str.electricsim.producers.CammesaGenerationProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,25 +15,25 @@ import java.time.OffsetDateTime;
 import java.util.Arrays;
 
 @Service
-public class CammesaConsumptionScheduler {
-    private final Logger log = LoggerFactory.getLogger(CammesaConsumptionScheduler.class);
+public class CammesaGenerationScheduler {
+    private final Logger log = LoggerFactory.getLogger(CammesaGenerationScheduler.class);
     private static final Duration WINDOW = Duration.ofMinutes(15);
 
-    private final RestClient consumptionConnector;
-    private final CammesaConsumptionProducer producer;
+    private final RestClient generationConnector;
+    private final CammesaGenerationProducer producer;
 
-    public CammesaConsumptionScheduler(RestClient consumptionConnector, CammesaConsumptionProducer producer) {
-        this.consumptionConnector = consumptionConnector;
+    public CammesaGenerationScheduler(RestClient generationConnector, CammesaGenerationProducer producer) {
+        this.generationConnector = generationConnector;
         this.producer = producer;
     }
 
-    @Scheduled(cron = "${producers.cammesa.consumption.cron}")
+    @Scheduled(cron = "${producers.cammesa.generation.cron}")
     public void fetchConsumptionData() {
-        log.info("Fetching consumption data from Cammesa...");
-        CammesaRawConsumption[] data = consumptionConnector
+        log.info("Fetching generating data from Cammesa...");
+        CammesaRawGeneration[] data = generationConnector
                 .get()
-                .uri(uriBuilder -> uriBuilder.path("/ObtieneDemandaYTemperaturaRegion").queryParam("id_region", "426").build())
-                .retrieve().body(CammesaRawConsumption[].class);
+                .uri(uriBuilder -> uriBuilder.path("/ObtieneGeneracioEnergiaPorRegion").queryParam("id_region", "426").build())
+                .retrieve().body(CammesaRawGeneration[].class);
 
         if (data == null || data.length == 0) {
             log.warn("No consumption data retrieved from Cammesa.");
@@ -45,7 +45,7 @@ public class CammesaConsumptionScheduler {
                         !d.timestamp().isBefore(now.minus(WINDOW)) &&
                         !d.timestamp().isAfter(now.plus(WINDOW)))
                 .findFirst()
-                .map(d -> new CammesaRecord(d.timestamp(), d.demand(), CammesaRecordType.DEMAND, "CABA"))
+                .map(d -> new CammesaRecord(d.timestamp(), d.energyGenerated(), CammesaRecordType.GENERATION, "CABA"))
                 .ifPresent(producer::send);
     }
 }
