@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS energy_snapshots (
+                                                id SERIAL PRIMARY KEY,
+                                                key TEXT,
+                                                date TIMESTAMP WITH TIME ZONE,
+                                                consumption DOUBLE PRECISION,
+                                                generation DOUBLE PRECISION,
+                                                temperature DOUBLE PRECISION,
+                                                humidity DOUBLE PRECISION,
+                                                rain DOUBLE PRECISION,
+                                                snow DOUBLE PRECISION,
+                                                pressure DOUBLE PRECISION,
+                                                wind_speed DOUBLE PRECISION,
+                                                wind_direction DOUBLE PRECISION,
+                                                clouds DOUBLE PRECISION,
+                                                sunrise TIMESTAMP WITH TIME ZONE,
+                                                sunset TIMESTAMP WITH TIME ZONE,
+                                                working_day BOOLEAN,
+                                                holiday BOOLEAN,
+                                                created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+    );
