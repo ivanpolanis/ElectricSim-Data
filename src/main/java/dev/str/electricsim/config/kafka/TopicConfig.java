@@ -48,6 +48,22 @@ public class TopicConfig {
         }
     }
 
+    @Bean("openWeatherTopic")
+    public NewTopic openWeatherTopic(OpenWeatherTopicProperties openWeatherTopicProperties) {
+        logger.info("Building OpenWeather Raw Topic");
+        return TopicBuilder
+                .name(openWeatherTopicProperties.getName())
+                .partitions(openWeatherTopicProperties.getPartitions())
+                .replicas(openWeatherTopicProperties.getReplicas()).build();
+    }
+
+    @ConfigurationProperties(prefix = "openweather-raw")
+    public static class OpenWeatherTopicProperties extends TopicProperties {
+        public OpenWeatherTopicProperties(String name, Integer partitions, Integer replicas) {
+            super(name, partitions, replicas);
+        }
+    }
+
     @Bean("energySnapshotsTopic")
     public NewTopic energySnapshotsTopic(EnergySnapshotsTopicProperties energySnapshotsTopicProperties) {
         logger.info("Building Energy Snapshots Topic");

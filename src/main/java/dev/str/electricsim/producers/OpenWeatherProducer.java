@@ -1,6 +1,7 @@
 package dev.str.electricsim.producers;
 
 import dev.str.electricsim.dto.OpenWeatherRaw;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import java.time.Instant;
 public class OpenWeatherProducer {
 
     private final KafkaTemplate<String, OpenWeatherRaw> kafkaTemplate;
+    private final NewTopic openWeatherTopic;
 
     @Value("${openweather.city}")
     private String city;
@@ -18,8 +20,9 @@ public class OpenWeatherProducer {
     @Value("${openweather.url}")
     private String url;
 
-    public OpenWeatherProducer(KafkaTemplate<String, OpenWeatherRaw> kafkaTemplate) {
+    public OpenWeatherProducer(KafkaTemplate<String, OpenWeatherRaw> kafkaTemplate, NewTopic openWeatherTopic) {
         this.kafkaTemplate = kafkaTemplate;
+        this.openWeatherTopic = openWeatherTopic;
     }
 
     /**
@@ -31,6 +34,6 @@ public class OpenWeatherProducer {
             raw.dt = Instant.now().getEpochSecond();
         }
 
-        kafkaTemplate.send("openweather-raw", "CABA", raw);
+        kafkaTemplate.send(openWeatherTopic.name(), "CABA", raw);
     }
 }
