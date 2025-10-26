@@ -1,16 +1,13 @@
 package dev.str.electricsim.config.kafka;
 
 import dev.str.electricsim.model.CammesaRecord;
-import dev.str.electricsim.model.EnergySnapshot;
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.streams.StreamsBuilder;
+import dev.str.electricsim.model.EnergySnapshotRecord;
+import dev.str.electricsim.model.WeatherRecord;
 import org.apache.kafka.streams.kstream.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafkaStreams;
 import org.springframework.kafka.support.serializer.JsonSerde;
-
-import java.time.Duration;
 
 @Configuration
 @EnableKafkaStreams
@@ -18,39 +15,24 @@ public class StreamsConfig {
 
     @Bean
     public JsonSerde<CammesaRecord> cammesaRecordSerde() {
-        return new JsonSerde<>(CammesaRecord.class);
+        JsonSerde<CammesaRecord> serde = new JsonSerde<>(CammesaRecord.class);
+        serde.ignoreTypeHeaders();
+        return serde;
     }
 
     @Bean
-    public JsonSerde<EnergySnapshot> energySnapshotSerde() {
-        return new JsonSerde<>(EnergySnapshot.class);
+    public JsonSerde<EnergySnapshotRecord> energySnapshotSerde() {
+        JsonSerde<EnergySnapshotRecord> serde = new JsonSerde<>(EnergySnapshotRecord.class);
+        serde.ignoreTypeHeaders();
+        return serde;
     }
 
     @Bean
-    public KStream<String, EnergySnapshot> energySnapshotStream(
-            StreamsBuilder builder,
-            JsonSerde<CammesaRecord> cammesaRecordSerde,
-            JsonSerde<EnergySnapshot> energySnapshotSerde
-    ) {
-        Duration window = Duration.ofMinutes(4);
-
-        KStream<String, CammesaRecord> consumption = builder.stream("cammesa-consumption-raw", Consumed.with(Serdes.String(), cammesaRecordSerde));
-
-        KStream<String, CammesaRecord> generation = builder.stream("cammesa-generation-raw", Consumed.with(Serdes.String(), cammesaRecordSerde));
-
-        KStream<String, EnergySnapshot> partial = consumption.join(
-                generation,
-                (c, g) -> new EnergySnapshot(
-                        c.timestamp().toString(),
-                        c.value(),
-                        g.value(),
-                        0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,c.timestamp(),c.timestamp(),null,null),
-                JoinWindows.ofTimeDifferenceWithNoGrace(window),
-                StreamJoined.with(Serdes.String(), cammesaRecordSerde, cammesaRecordSerde)
-        );
-
-        partial.to("energy-snapshots",  Produced.with(Serdes.String(), energySnapshotSerde));
-        return partial;
-
+    public JsonSerde<WeatherRecord> weatherRecordSerde() {
+        JsonSerde<WeatherRecord> serde = new JsonSerde<>(WeatherRecord.class);
+        serde.ignoreTypeHeaders();
+        return serde;
     }
+
+
 }

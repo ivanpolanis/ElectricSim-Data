@@ -1,51 +1,67 @@
 package dev.str.electricsim.producers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.str.electricsim.dto.OpenWeatherRaw;
-import org.springframework.beans.factory.annotation.Value;
+import dev.str.electricsim.model.WeatherRecord;
+import org.apache.kafka.clients.admin.NewTopic;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 
-@Component
+@Service
 public class OpenWeatherProducer {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final Logger log = LoggerFactory.getLogger(OpenWeatherProducer.class);
+    private final KafkaTemplate<String, WeatherRecord> template;
+    private final NewTopic openWeatherTopic;
 
-    @Value("${openweather.city}")
-    private String city;
-
-    @Value("${openweather.url}")
-    private String url;
-
-    public OpenWeatherProducer(KafkaTemplate<String, Object> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate;
+    public OpenWeatherProducer(KafkaTemplate<String, WeatherRecord> template, NewTopic openWeatherTopic) {
+        this.template = template;
+        this.openWeatherTopic = openWeatherTopic;
     }
 
-    // recibe un DTO ya mapeado por el scheduler; publicamos al topic
-    public void publish(OpenWeatherRaw raw) {
-        Map<String, Object> payload = new HashMap<>();
-        long ts = raw.dt != null ? raw.dt : Instant.now().getEpochSecond();
+    public void send(OpenWeatherRaw raw) {
+        if (raw == null) {
+            log.warn("Attempted to send null OpenWeatherRaw record, skipping...");
+            return;
+        }
 
-        payload.put("timestamp", Instant.ofEpochSecond(ts).toString());
-        payload.put("region", "CABA"); // o "CABA" fijo; o extraer de city
-        payload.put("temperature", raw.main != null ? raw.main.temp : null);
-        payload.put("humidity", raw.main != null ? raw.main.humidity : null);
-        payload.put("pressure", raw.main != null ? raw.main.pressure : null);
-        payload.put("wind_speed", raw.wind != null ? raw.wind.speed : null);
-        payload.put("wind_direction", raw.wind != null ? raw.wind.deg : null);
-        payload.put("clouds", raw.clouds != null ? raw.clouds.all : null);
-        payload.put("sunrise", raw.sys != null && raw.sys.sunrise != null ? Instant.ofEpochSecond(raw.sys.sunrise).toString() : null);
-        payload.put("sunset", raw.sys != null && raw.sys.sunset != null ? Instant.ofEpochSecond(raw.sys.sunset).toString() : null);
-        // rain and snow: prefer 1h then 3h
-        payload.put("rain", raw.rain != null ? (raw.rain.oneH != null ? raw.rain.oneH : raw.rain.threeH) : 0.0);
-        payload.put("snow", raw.snow != null ? (raw.snow.oneH != null ? raw.snow.oneH : raw.snow.threeH) : 0.0);
-        payload.put("source", "openweather");
+        if (raw.dt == null) {
+            raw.dt = Instant.now().getEpochSecond();
+        }
 
-        kafkaTemplate.send("weather", "CABA", payload);
+        WeatherRecord record = parse(raw);
+
+        log.info("Sending message to OpenWeather topic: {}", record);
+        template.send(openWeatherTopic.name(), "CABA", record);
+    }
+
+    private WeatherRecord parse(OpenWeatherRaw raw) {
+        Double rain = null;
+        if (raw.rain != null) {
+            if (raw.rain.oneH != null) rain = raw.rain.oneH;
+            else if (raw.rain.threeH != null) rain = raw.rain.threeH / 3.0; // promedio por hora
+        }
+
+        Double snow = null;
+        if (raw.snow != null) {
+            if (raw.snow.oneH != null) snow = raw.snow.oneH;
+            else if (raw.snow.threeH != null) snow = raw.snow.threeH / 3.0;
+        }
+
+        return new WeatherRecord(
+                raw.main != null ? raw.main.temp : null,
+                raw.main != null ? raw.main.humidity : null,
+                raw.main != null ? raw.main.pressure : null,
+                raw.wind != null ? raw.wind.speed : null,
+                raw.wind != null ? raw.wind.deg : null,
+                raw.clouds != null ? raw.clouds.all : null,
+                rain,
+                snow,
+                raw.sys != null ? raw.sys.sunrise : null,
+                raw.sys != null ? raw.sys.sunset : null
+        );
     }
 }

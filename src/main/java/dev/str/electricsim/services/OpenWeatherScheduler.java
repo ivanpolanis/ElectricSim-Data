@@ -32,7 +32,7 @@ public class OpenWeatherScheduler {
         this.producer = producer;
     }
 
-    @Scheduled(cron = "0 */1 * * * *") // cada 5 minutos en los minutos 0,5,10...
+    @Scheduled(cron = "0 */5 * * * *") // cada 5 minutos en los minutos 0,5,10...
     public void fetchAndPublish() {
         if (apiKey == null || apiKey.isBlank()) {
             // log y salir
@@ -45,7 +45,7 @@ public class OpenWeatherScheduler {
             ResponseEntity<String> resp = rest.getForEntity(requestUrl, String.class);
             if (resp.getStatusCode().is2xxSuccessful() && resp.getBody() != null) {
                 OpenWeatherRaw raw = mapper.readValue(resp.getBody(), OpenWeatherRaw.class);
-                producer.publish(raw);
+                producer.send(raw);
             } else {
                 log.info(resp.getBody());
             }
