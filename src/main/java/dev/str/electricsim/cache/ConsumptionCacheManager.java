@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class ConsumptionCacheManager extends DbCacheManager<ConsumptionEntity, ConsumptionRepository> {
+public class ConsumptionCacheManager extends DbCacheManager<ConsumptionEntity, List<ConsumptionEntity>, ConsumptionRepository> {
 
     private final static Logger log = LoggerFactory.getLogger(ConsumptionCacheManager.class);
 
