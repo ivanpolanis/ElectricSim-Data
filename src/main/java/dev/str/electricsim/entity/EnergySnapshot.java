@@ -1,4 +1,4 @@
-package dev.str.electricsim.model;
+package dev.str.electricsim.entity;
 
 import jakarta.persistence.*;
 
