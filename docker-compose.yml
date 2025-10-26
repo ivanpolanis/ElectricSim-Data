@@ -46,7 +46,7 @@ services:
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
 
   postgres:
-    image: postgres:15
+    image: postgres:17
     container_name: postgres
     environment:
       POSTGRES_USER: postgres
@@ -56,7 +56,6 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
 volumes:
   postgres-data:
 
