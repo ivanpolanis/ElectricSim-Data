@@ -4,12 +4,14 @@ To run the initialization script, use the following command in your terminal:
 
 ```bash
 chmod +x ./init.sh
+./init.sh
 ```
 
 If you want to down the containers, use:
 
 ```bash
 chmod +x ./down.sh
+./down.sh
 ```
 
 # Endpoints
