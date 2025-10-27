@@ -21,7 +21,7 @@ chmod +x ./down.sh
     - start: LocalDate (Format: YYYY-MM-DD)
     - end: LocalDate (Format: YYYY-MM-DD)
   - Description: Retrieves CSV data for the specified date range.
-    - Example: `GET /?start=2023-01-01&end=2023-01-31`
+    - Example: `GET /?start=2025-03-10&end=2025-04-31`
 
 > [!WARNING]  
 > Usar despues de 2025-03-10 que cammesa devuelve datos.
