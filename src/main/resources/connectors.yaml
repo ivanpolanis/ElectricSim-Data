@@ -4,3 +4,5 @@ cammesa-consumption:
 cammesa-generation:
     url: https://api.cammesa.com/demanda-svc/generacion
     idRegion: 426
+openweather-history:
+    url: https://history.openweathermap.org/data/2.5/history

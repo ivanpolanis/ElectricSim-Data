@@ -1,4 +1,4 @@
-package dev.str.electricsim.model;
+package dev.str.electricsim.entity;
 
 import jakarta.persistence.*;
 
@@ -15,19 +15,19 @@ public class EnergySnapshot {
     private Double consumption;
     private Double generation;
     private Double temperature;
-    private Double humidity;
+    private Integer humidity;
     private Double rain;
     private Double snow;
     private Double pressure;
     private Double wind_speed;
-    private Double wind_direction;
-    private Double clouds;
+    private Integer wind_direction;
+    private Integer clouds;
     private OffsetDateTime sunrise;
     private OffsetDateTime sunset;
     private Boolean working_day;
     private Boolean holiday;
 
-    public EnergySnapshot(String date, Double consumption, Double generation, Double temperature, Double humidity, Double rain, Double snow, Double pressure, Double wind_speed, Double wind_direction, Double clouds, OffsetDateTime sunrise, OffsetDateTime sunset, Boolean working_day, Boolean holiday) {
+    public EnergySnapshot(String date, Double consumption, Double generation, Double temperature, Integer humidity, Double rain, Double snow, Double pressure, Double wind_speed, Integer wind_direction, Integer clouds, OffsetDateTime sunrise, OffsetDateTime sunset, Boolean working_day, Boolean holiday) {
         this.date = date;
         this.consumption = consumption;
         this.generation = generation;
@@ -85,11 +85,11 @@ public class EnergySnapshot {
         this.temperature = temperature;
     }
 
-    public Double getHumidity() {
+    public Integer getHumidity() {
         return humidity;
     }
 
-    public void setHumidity(Double humidity) {
+    public void setHumidity(Integer humidity) {
         this.humidity = humidity;
     }
 
@@ -125,19 +125,19 @@ public class EnergySnapshot {
         this.wind_speed = wind_speed;
     }
 
-    public Double getWind_direction() {
+    public Integer getWind_direction() {
         return wind_direction;
     }
 
-    public void setWind_direction(Double wind_direction) {
+    public void setWind_direction(Integer wind_direction) {
         this.wind_direction = wind_direction;
     }
 
-    public Double getClouds() {
+    public Integer getClouds() {
         return clouds;
     }
 
-    public void setClouds(Double clouds) {
+    public void setClouds(Integer clouds) {
         this.clouds = clouds;
     }
 

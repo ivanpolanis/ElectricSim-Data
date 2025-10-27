@@ -1,10 +1,6 @@
 package dev.str.electricsim.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
+import dev.str.electricsim.entity.EnergySnapshot;
 
 import java.time.OffsetDateTime;
 
@@ -13,13 +9,13 @@ public record EnergySnapshotRecord(
         Double consumption,
         Double generation,
         Double temperature,
-        Double humidity,
+        Integer humidity,
         Double rain,
         Double snow,
         Double pressure,
         Double wind_speed,
-        Double wind_direction,
-        Double clouds,
+        Integer wind_direction,
+        Integer clouds,
         OffsetDateTime sunrise,
         OffsetDateTime sunset,
         Boolean working_day,
@@ -42,6 +38,26 @@ public record EnergySnapshotRecord(
                 sunset,
                 working_day,
                 holiday
+        );
+    }
+
+    public String toCsvRecord() {
+        return String.join(",",
+                date,
+                consumption != null ? consumption.toString() : "",
+                generation != null ? generation.toString() : "",
+                temperature != null ? temperature.toString() : "",
+                humidity != null ? humidity.toString() : "",
+                rain != null ? rain.toString() : "",
+                snow != null ? snow.toString() : "",
+                pressure != null ? pressure.toString() : "",
+                wind_speed != null ? wind_speed.toString() : "",
+                wind_direction != null ? wind_direction.toString() : "",
+                clouds != null ? clouds.toString() : "",
+                sunrise != null ? sunrise.toString() : "",
+                sunset != null ? sunset.toString() : "",
+                working_day != null ? working_day.toString() : "",
+                holiday != null ? holiday.toString() : ""
         );
     }
 }

@@ -39,5 +39,19 @@ public class ConnectorConfig {
             super(url);
         }
     }
+
+    @Bean("weatherHistoryConnector")
+    public RestClient weatherHistoryConnector(OpenWeatherProperties openWeatherProperties) {
+        return RestClient.builder()
+                .baseUrl(openWeatherProperties.url())
+                .build();
+    }
+
+    @ConfigurationProperties(prefix="openweather-history")
+    public static class OpenWeatherProperties extends ConnectorProperties {
+        public OpenWeatherProperties(String url) {
+            super(url);
+        }
+    }
 }
 
