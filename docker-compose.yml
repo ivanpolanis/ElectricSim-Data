@@ -92,9 +92,15 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_DASHBOARDS_ALLOW_UI_UPDATES=true
     volumes:
       - grafana-data:/var/lib/grafana
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/entrypoint.sh:/entrypoint.sh:ro
+    user: "0:0"
+    entrypoint:
+      - /entrypoint.sh
 
   grafana-alloy:
     image: grafana/alloy:latest
