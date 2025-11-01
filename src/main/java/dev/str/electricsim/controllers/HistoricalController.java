@@ -34,22 +34,17 @@ public class HistoricalController {
         if (start == null || end == null || start.isAfter(end)) {
             return ResponseEntity.internalServerError().build();
         }
-        // For demonstration, we use a fixed date. In a real application, this could be a request parameter.
         var data = historicalService.getHistoricalWeatherBetweenDates(start, end);
 
         try {
-            // 2. Generar el contenido del CSV
             String csvContent = generateCsv(data);
 
-            // 3. Convertir el String a un InputStream
             byte[] csvBytes = csvContent.getBytes(StandardCharsets.UTF_8);
             InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(csvBytes));
 
-            // 4. Configurar las cabeceras HTTP
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"reporte_commons.csv\"");
 
-            // 5. Devolver la ResponseEntity
             return ResponseEntity.ok()
                     .headers(headers)
                     .contentLength(csvBytes.length)
@@ -57,7 +52,6 @@ public class HistoricalController {
                     .body(resource);
 
         } catch (IOException e) {
-            // Manejo básico de errores
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -67,7 +61,7 @@ public class HistoricalController {
                 .flatMap(List::stream)
                 .toList();
 
-        String[] headers = {"date", "consumption", "generation", "temperature", "humidity", "rain", "snow", "pressure", "wind_speed", "wind_direction", "clouds", "sunrise", "sunset", "working_day", "holiday"};
+        String[] headers = {"date", "consumption", "temperature", "humidity", "rain", "snow", "pressure", "wind_speed", "wind_direction", "clouds", "sunrise", "sunset", "working_day", "holiday"};
 
 
         CSVFormat format = CSVFormat.DEFAULT.builder()
