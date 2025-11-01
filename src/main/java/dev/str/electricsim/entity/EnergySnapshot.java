@@ -11,7 +11,7 @@ public class EnergySnapshot {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String date;
+    private OffsetDateTime date;
     private Double consumption;
     private Double generation;
     private Double temperature;
@@ -27,7 +27,7 @@ public class EnergySnapshot {
     private Boolean working_day;
     private Boolean holiday;
 
-    public EnergySnapshot(String date, Double consumption, Double generation, Double temperature, Integer humidity, Double rain, Double snow, Double pressure, Double wind_speed, Integer wind_direction, Integer clouds, OffsetDateTime sunrise, OffsetDateTime sunset, Boolean working_day, Boolean holiday) {
+    public EnergySnapshot(OffsetDateTime date, Double consumption, Double generation, Double temperature, Integer humidity, Double rain, Double snow, Double pressure, Double wind_speed, Integer wind_direction, Integer clouds, OffsetDateTime sunrise, OffsetDateTime sunset, Boolean working_day, Boolean holiday) {
         this.date = date;
         this.consumption = consumption;
         this.generation = generation;
@@ -53,11 +53,11 @@ public class EnergySnapshot {
         this.id = id;
     }
 
-    public String getDate() {
+    public OffsetDateTime getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(OffsetDateTime date) {
         this.date = date;
     }
 
