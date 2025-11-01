@@ -45,7 +45,6 @@ public record EnergySnapshotRecord(
         return String.join(",",
                 date,
                 consumption != null ? consumption.toString() : "",
-                generation != null ? generation.toString() : "",
                 temperature != null ? temperature.toString() : "",
                 humidity != null ? humidity.toString() : "",
                 rain != null ? rain.toString() : "",
