@@ -24,7 +24,7 @@ public record EnergySnapshotRecord(
 ) {
     public EnergySnapshot toEnergySnapshot() {
         return new EnergySnapshot(
-                date,
+                OffsetDateTime.parse(date),
                 consumption,
                 generation,
                 temperature,
