@@ -3,6 +3,7 @@ package dev.str.electricsim.model;
 import dev.str.electricsim.entity.EnergySnapshot;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 public record EnergySnapshotRecord(
         String date,
@@ -41,8 +42,8 @@ public record EnergySnapshotRecord(
         );
     }
 
-    public String toCsvRecord() {
-        return String.join(",",
+    public List<String> toCsvRecord() {
+        return List.of(
                 date,
                 consumption != null ? consumption.toString() : "",
                 temperature != null ? temperature.toString() : "",
