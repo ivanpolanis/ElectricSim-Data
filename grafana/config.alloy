@@ -1,0 +1,109 @@
+prometheus.exporter.self "alloy_check" { }
+
+discovery.relabel "alloy_check" {
+  targets = prometheus.exporter.self.alloy_check.targets
+
+  rule {
+    target_label = "instance"
+    replacement  = constants.hostname
+  }
+
+  rule {
+    target_label = "alloy_hostname"
+    replacement  = constants.hostname
+  }
+
+  rule {
+    target_label = "job"
+    replacement  = "integrations/alloy-check"
+  }
+}
+
+prometheus.scrape "alloy_check" {
+  targets    = discovery.relabel.alloy_check.output
+  forward_to = [prometheus.relabel.alloy_check.receiver]  
+
+  scrape_interval = "10s"
+}
+
+prometheus.relabel "alloy_check" {
+  forward_to = [prometheus.remote_write.metrics_service.receiver]
+
+  rule {
+    source_labels = ["__name__"]
+    regex         = "(prometheus_target_sync_length_seconds_sum|prometheus_target_scrapes_.*|prometheus_target_interval.*|prometheus_sd_discovered_targets|alloy_build.*|prometheus_remote_write_wal_samples_appended_total|process_start_time_seconds)"
+    action        = "keep"
+  }
+}
+
+prometheus.remote_write "metrics_service" {
+  endpoint {
+    url = "http://victoriametrics:8428/api/v1/write"
+  }
+}
+
+loki.write "local_loki" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}
+
+
+prometheus.exporter.postgres "integrations_postgres_exporter" {
+    data_source_names = ["postgresql://" + sys.env("POSTGRES_USER") + ":" + sys.env("POSTGRES_PASSWORD") + "@postgres:5432/" + sys.env("POSTGRES_DB") + "?sslmode=disable"]
+}
+discovery.relabel "integrations_postgres_exporter" {
+    targets = prometheus.exporter.postgres.integrations_postgres_exporter.targets
+
+    rule {
+        target_label = "instance"
+        replacement  = constants.hostname
+    }
+    rule {                
+        target_label = "job"
+        replacement  = "integrations/postgres_exporter"
+    }
+}
+prometheus.scrape "integrations_postgres_exporter" {
+    targets    = discovery.relabel.integrations_postgres_exporter.output
+    forward_to = [prometheus.remote_write.metrics_service.receiver]
+    job_name   = "integrations/postgres_exporter"
+}
+
+discovery.docker "app_containers" {
+  host = "unix:///var/run/docker.sock"
+  filter {
+    name   = "label"
+    values = ["logs.scrape=true"]
+  }
+}
+discovery.relabel "app_containers" {
+  targets = discovery.docker.app_containers.targets
+
+  rule {
+    target_label = "job"
+    replacement  = "integrations/docker"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+    replacement   = "$1"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+    target_label  = "service"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_project"]
+    target_label  = "project"
+  }
+}
+loki.source.docker "app_logs" {
+  host    = "unix:///var/run/docker.sock"
+  targets = discovery.relabel.app_containers.output
+  forward_to = [loki.write.local_loki.receiver]
+}
