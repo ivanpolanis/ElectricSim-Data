@@ -54,8 +54,8 @@ public record EnergySnapshotRecord(
                 wind_speed != null ? wind_speed.toString() : "",
                 wind_direction != null ? wind_direction.toString() : "",
                 clouds != null ? clouds.toString() : "",
-                sunrise != null ? sunrise.toString() : "",
-                sunset != null ? sunset.toString() : "",
+                sunrise != null ? String.valueOf(sunrise.toEpochSecond()) : "",
+                sunset != null ? String.valueOf(sunset.toEpochSecond()) : "",
                 working_day != null ? working_day.toString() : "",
                 holiday != null ? holiday.toString() : ""
         );
