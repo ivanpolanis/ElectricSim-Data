@@ -106,14 +106,7 @@ El sistema está diseñado como un pipeline de datos continuo, desacoplado y esc
 <h1 id="structure">Estructura del proyecto</h1>
 
 <p>
-Este repositorio corresponde exclusivamente al <b>módulo de Deep Learning de ElectricSim</b>.
-Aquí se implementa el modelo predictivo, el preprocesamiento de datos, la inferencia,
-la detección de anomalías y el mecanismo de reentrenamiento en tiempo real.
-</p>
-
-<p>
-La recolección de datos, la publicación en Kafka y la visualización del sistema forman parte
-de otros repositorios del proyecto ElectricSim y <b>no se encuentran incluidos aquí</b>.
+Este repositorio corresponde al <b>módulo de adquisición, procesamiento y persistencia de datos de ElectricSim</b>. La estructura del proyecto está organizada siguiendo una arquitectura modular, separando claramente las responsabilidades de cada componente del pipeline de datos.
 </p>
 
 <pre>
